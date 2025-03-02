@@ -36,6 +36,12 @@ app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error stack trace to the console
     res.status(500).send('Something went wrong!'); // Send a generic error message to the client
   });
+
+  
+// A route that deliberately throws an error
+app.get('/error', (req, res) => {
+    throw new Error('This is a test error');
+  });
   
 
 // Start the server and listen on port 8080
