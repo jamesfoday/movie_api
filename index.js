@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+
+app.use(express.static('public'));
+
 // Example top 10 movies data
 const topMovies = [
     { title: "The Shawshank Redemption", year: 1994 },
