@@ -18,8 +18,14 @@ const topMovies = [
   app.get('/movies', (req, res) => {
     res.json(topMovies); // Send the movies data as a JSON response
   });
+
+// Define a route for the root URL "/"
+app.get('/', (req, res) => {
+    res.send('Welcome to the Movie API!'); // Default textual response
+  });
   
-  const port = 8080;
+
+const port = 8080;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
