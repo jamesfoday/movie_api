@@ -38,10 +38,6 @@ app.use((err, req, res, next) => {
   });
 
   
-// A route that deliberately throws an error
-app.get('/error', (req, res) => {
-    throw new Error('This is a test error');
-  });
   
 
 // Start the server and listen on port 8080
