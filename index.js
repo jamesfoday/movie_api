@@ -32,6 +32,12 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Movie API!'); // Default textual response
 });
 
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error stack trace to the console
+    res.status(500).send('Something went wrong!'); // Send a generic error message to the client
+  });
+  
+
 // Start the server and listen on port 8080
 const port = 8080;
 app.listen(port, () => {
