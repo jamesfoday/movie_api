@@ -8,19 +8,37 @@ app.use(morgan('common'));
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-// Example top 10 movies data
+// Example top 3 movies data
 const topMovies = [
-  { title: "The Shawshank Redemption", year: 1994 },
-  { title: "The Godfather", year: 1972 },
-  { title: "The Dark Knight", year: 2008 },
-  { title: "Pulp Fiction", year: 1994 },
-  { title: "The Lord of the Rings: The Return of the King", year: 2003 },
-  { title: "Forrest Gump", year: 1994 },
-  { title: "Inception", year: 2010 },
-  { title: "Fight Club", year: 1999 },
-  { title: "The Matrix", year: 1999 },
-  { title: "Goodfellas", year: 1990 }
-];
+    {
+      title: "The Shawshank Redemption",
+      year: 1994,
+      description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+      genre: "Drama",
+      director: "Frank Darabont",
+      imageURL: "https://link-to-image.com/shawshank.jpg",
+      featured: true
+    },
+    {
+      title: "The Godfather",
+      year: 1972,
+      description: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+      genre: "Crime, Drama",
+      director: "Francis Ford Coppola",
+      imageURL: "https://link-to-image.com/godfather.jpg",
+      featured: true
+    },
+    {
+      title: "The Dark Knight",
+      year: 2008,
+      description: "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
+      genre: "Action, Crime, Drama",
+      director: "Christopher Nolan",
+      imageURL: "https://link-to-image.com/darkknight.jpg",
+      featured: true
+    }
+  ];
+  
 
 // Define a route for "/movies"
 app.get('/movies', (req, res) => {
