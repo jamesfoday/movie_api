@@ -16,7 +16,7 @@ const topMovies = [
       description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
       genre: "Drama",
       director: "Frank Darabont",
-      imageURL: "https://link-to-image.com/shawshank.jpg",
+      imageURL: "bit.ly/3DgaDve",
       featured: true
     },
     {
@@ -25,7 +25,7 @@ const topMovies = [
       description: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
       genre: "Crime, Drama",
       director: "Francis Ford Coppola",
-      imageURL: "https://link-to-image.com/godfather.jpg",
+      imageURL: "bit.ly/4i38aDz",
       featured: true
     },
     {
@@ -34,7 +34,7 @@ const topMovies = [
       description: "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
       genre: "Action, Crime, Drama",
       director: "Christopher Nolan",
-      imageURL: "https://link-to-image.com/darkknight.jpg",
+      imageURL: "bit.ly/3FfXbbe",
       featured: true
     }
   ];
