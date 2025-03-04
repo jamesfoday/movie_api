@@ -12,6 +12,44 @@ app.use(morgan('common'));
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
+//Allow new users to register start;
+// Array to store registered users
+let users = [];
+
+// Define a route for "/users/register" (to register new users)
+app.post('/users/register', (req, res) => {
+  // Extract email and username from the request body
+  const { email, username } = req.body;
+
+  // Check if both email and username are provided
+  if (!email || !username) {
+    return res.status(400).send("Email and username are required.");
+  }
+
+  // Check if the email already exists in the users array
+  const existingUser = users.find(user => user.email === email);
+  
+  if (existingUser) {
+    return res.status(400).send("Email is already registered.");
+  }
+
+  //  unique user ID
+  const userId = uuidv4();
+
+  // New user created object and push it into the users array
+  const newUser = { id: userId, email, username };
+  users.push(newUser);
+
+  // Return a success response with the new user's data (email and username)
+  res.status(201).json({
+    message: "User registered successfully!",
+    user: newUser
+  });
+});
+
+//Allow new users to register end;
+
+
 // Example top 3 movies data
 const topMovies = [
     {
