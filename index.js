@@ -55,7 +55,23 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something went wrong!'); // Send a generic error message to the client
   });
 
+// Define a route for "/movies/:title"
+app.get('/movies/:title', (req, res) => {
+    // Extract the movie title from the URL parameter
+    const movieTitle = req.params.title.toLowerCase();
   
+    // Find the movie that matches the title
+    const movie = topMovies.find((m) => m.title.toLowerCase() === movieTitle);
+  
+    // If the movie is found, return it as a JSON response
+    if (movie) {
+      res.json(movie);
+    } else {
+      // If the movie is not found, return a 404 error
+      res.status(404).send('Movie not found');
+    }
+  });
+    
   
 
 // Start the server and listen on port 8080
