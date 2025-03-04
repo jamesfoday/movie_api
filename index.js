@@ -71,6 +71,44 @@ app.get('/movies/:title', (req, res) => {
       res.status(404).send('Movie not found');
     }
   });
+ 
+// Director data 
+const directors = [
+    {
+      name: "Francis Ford Coppola",
+      bio: "An American film director, producer, and screenwriter, known for his work on the 'Godfather' trilogy.",
+      birthYear: 1939,
+      deathYear: null // Alive
+    },
+    {
+      name: "Christopher Nolan",
+      bio: "A British-American filmmaker known for his work on films like 'Inception' and 'The Dark Knight trilogy'.",
+      birthYear: 1970,
+      deathYear: null // Alive
+    },
+    {
+      name: "Martin Scorsese",
+      bio: "An American director, producer, screenwriter, and actor known for his work on 'Goodfellas' and 'Taxi Driver'.",
+      birthYear: 1942,
+      deathYear: null // Alive
+    }
+  ];
+  
+  // Define  route for directors '/directors/:name' 
+  app.get('/directors/:name', (req, res) => {
+    const directorName = req.params.name.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+  
+    // Find the director by name
+    const director = directors.find(d => d.name.toLowerCase() === directorName);
+  
+    // If the director is found, return the director data as a JSON response
+    if (director) {
+      res.json(director);
+    } else {
+      // If the director is not found, return a 404 error
+      res.status(404).send('Director not found');
+    }
+  });
     
   
 
