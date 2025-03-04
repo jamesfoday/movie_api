@@ -1,6 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
+const { v4: uuidv4 } = require('uuid'); // Import uuid
+const bodyParser = require('body-parser');
+
 const app = express();
+app.use(bodyParser.json());
 
 // Use Morgan to log all requests in 'common' format
 app.use(morgan('common'));
