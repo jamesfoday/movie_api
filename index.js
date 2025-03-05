@@ -49,6 +49,40 @@ app.post('/users/register', (req, res) => {
 
 //Allow new users to register end;
 
+//Allow new users to update their start;
+
+
+// Define a route for "/users/:id" (to update user info)
+app.put('/users/:id', (req, res) => {
+    const userId = req.params.id;  // Get the user ID from the URL
+    const { username } = req.body; // Get the updated username from the request body
+  
+    // Check if the username is provided
+    if (!username) {
+      return res.status(400).send("Username is required.");
+    }
+  
+    // Find the user by ID
+    const user = users.find(u => u.id === userId);
+  
+    // If the user is not found, return a 404 error
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+  
+    // Update the username
+    user.username = username;
+  
+    // Return the updated user data
+    res.status(200).json({
+      message: "User information updated successfully!",
+      user: user
+    });
+  });
+  
+  //Allow new users to update their end;
+  
+
 
 // Example top 3 movies data
 const topMovies = [
