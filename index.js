@@ -45,6 +45,28 @@ app.post('/users/register', (req, res) => {
   });
 });
 
+// Define a route for "/users/:id" (to deregister a user)
+app.delete('/users/:id', (req, res) => {
+    const userId = req.params.id;  // Get the user ID from the URL
+  
+    // Find the index of the user by ID
+    const userIndex = users.findIndex(u => u.id === userId);
+  
+    // If the user is not found, return a 404 error
+    if (userIndex === -1) {
+      return res.status(404).send("User not found.");
+    }
+  
+    // Remove the user from the users array
+    users.splice(userIndex, 1);  // This removes 1 user at the specified index
+  
+    // Return a success response
+    res.status(200).json({
+      message: "User account has been removed successfully."
+    });
+  });
+  
+
 // Define a route for "/users/:id" (to update user info)
 app.put('/users/:id', (req, res) => {
     const userId = req.params.id;  // Get the user ID from the URL
