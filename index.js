@@ -125,6 +125,41 @@ app.post('/users/:id/favorites', (req, res) => {
     });
 });
 
+// Define the route to remove a favorite movie
+app.delete('/users/:id/favorites/:movieId', (req, res) => {
+    const userId = req.params.id;  // Get the user ID from the URL
+    const movieId = parseInt(req.params.movieId);  // Get the movie ID from the URL
+  
+    // Find the user by ID
+    const user = users.find(u => u.id === userId);
+  
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+  
+    if (!user.favorites || user.favorites.length === 0) {
+      return res.status(404).send("No favorites found for this user.");
+    }
+  
+    // Remove the movie using filter (removes movie with matching ID)
+    const updatedFavorites = user.favorites.filter(m => m.id !== movieId);
+  
+    // If the favorites list is unchanged, return an error
+    if (updatedFavorites.length === user.favorites.length) {
+      return res.status(404).send("Movie not found in your favorites.");
+    }
+  
+    // Update the user's favorites with the new list (after removing the movie)
+    user.favorites = updatedFavorites;
+  
+    // Return a success response
+    res.status(200).json({
+      message: "Movie has been removed from your favorites.",
+      favorites: user.favorites
+    });
+  });
+  
+
 // Example top 3 movies data
 const topMovies = [
     {
