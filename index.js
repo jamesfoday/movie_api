@@ -6,13 +6,11 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-// Use Morgan to log all requests in 'common' format
 app.use(morgan('common'));
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-//Allow new users to register start;
 // Array to store registered users
 let users = [];
 
@@ -33,10 +31,10 @@ app.post('/users/register', (req, res) => {
     return res.status(400).send("Email is already registered.");
   }
 
-  //  unique user ID
+  // Generate a unique user ID
   const userId = uuidv4();
 
-  // New user created object and push it into the users array
+  // Create a new user object and push it into the users array
   const newUser = { id: userId, email, username };
   users.push(newUser);
 
@@ -46,11 +44,6 @@ app.post('/users/register', (req, res) => {
     user: newUser
   });
 });
-
-//Allow new users to register end;
-
-//Allow new users to update their start;
-
 
 // Define a route for "/users/:id" (to update user info)
 app.put('/users/:id', (req, res) => {
@@ -78,11 +71,59 @@ app.put('/users/:id', (req, res) => {
       message: "User information updated successfully!",
       user: user
     });
-  });
-  
-  //Allow new users to update their end;
-  
+});
 
+// Sample movie data 
+const movies = [
+    { id: 1, title: "The Godfather", year: 1972 },
+    { id: 2, title: "The Dark Knight", year: 2008 },
+    { id: 3, title: "Pulp Fiction", year: 1994 },
+    // Add more movies as needed
+];
+
+// Define a route for "/users/:id/favorites" (to add a movie to favorites)
+app.post('/users/:id/favorites', (req, res) => {
+    const userId = req.params.id;  // Get the user ID from the URL
+    const { movieId } = req.body;  // Get the movie ID from the request body
+  
+    // Check if the movieId is provided
+    if (!movieId) {
+      return res.status(400).send("Movie ID is required.");
+    }
+  
+    // Find the user by ID
+    const user = users.find(u => u.id === userId);
+  
+    // If the user is not found, return a 404 error
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+  
+    // Find the movie by ID
+    const movie = movies.find(m => m.id === movieId);
+  
+    // If the movie is not found, return a 404 error
+    if (!movie) {
+      return res.status(404).send("Movie not found.");
+    }
+  
+    // Check if the movie is already in the user's favorites
+    if (user.favorites && user.favorites.some(fav => fav.id === movieId)) {
+      return res.status(400).send("Movie is already in your favorites.");
+    }
+  
+    // If not, add the movie to the user's favorites
+    if (!user.favorites) {
+      user.favorites = [];  // Initialize favorites if it's not defined
+    }
+    user.favorites.push(movie);
+  
+    // Return a success response
+    res.status(201).json({
+      message: "Movie has been added to your favorites!",
+      favorites: user.favorites
+    });
+});
 
 // Example top 3 movies data
 const topMovies = [
@@ -113,8 +154,7 @@ const topMovies = [
       imageURL: "bit.ly/3FfXbbe",
       featured: true
     }
-  ];
-  
+];
 
 // Define a route for "/movies"
 app.get('/movies', (req, res) => {
@@ -126,28 +166,25 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Movie API!'); // Default textual response
 });
 
+// Handle 500 errors
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error stack trace to the console
     res.status(500).send('Something went wrong!'); // Send a generic error message to the client
-  });
+});
 
 // Define a route for "/movies/:title"
 app.get('/movies/:title', (req, res) => {
-    // Extract the movie title from the URL parameter
     const movieTitle = req.params.title.toLowerCase();
   
-    // Find the movie that matches the title
     const movie = topMovies.find((m) => m.title.toLowerCase() === movieTitle);
   
-    // If the movie is found, return it as a JSON response
     if (movie) {
       res.json(movie);
     } else {
-      // If the movie is not found, return a 404 error
       res.status(404).send('Movie not found');
     }
-  });
- 
+});
+
 // Director data 
 const directors = [
     {
@@ -168,25 +205,20 @@ const directors = [
       birthYear: 1942,
       deathYear: null // Alive
     }
-  ];
+];
+
+// Define route for directors '/directors/:name' 
+app.get('/directors/:name', (req, res) => {
+    const directorName = req.params.name.toLowerCase();
   
-  // Define  route for directors '/directors/:name' 
-  app.get('/directors/:name', (req, res) => {
-    const directorName = req.params.name.toLowerCase(); // Convert to lowercase for case-insensitive comparison
-  
-    // Find the director by name
     const director = directors.find(d => d.name.toLowerCase() === directorName);
   
-    // If the director is found, return the director data as a JSON response
     if (director) {
       res.json(director);
     } else {
-      // If the director is not found, return a 404 error
       res.status(404).send('Director not found');
     }
-  });
-    
-  
+});
 
 // Start the server and listen on port 8080
 const port = 8080;
