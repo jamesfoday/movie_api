@@ -1,12 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyFlix API Documentation</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    h2 {
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-    <h1>MyFlix API</h1>
-    <p>The MyFlix API allows users to access a collection of movies, view details about movies, genres, and directors, and manage their user profiles.</p>
+
+  <h1>API Documentation for Movie API</h1>
+
+  <h2>List of Endpoints</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Request</th>
+        <th>URL</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Register User -->
+      <tr>
+        <td>POST</td>
+        <td>/users/register</td>
+        <td>
+          <strong>Registers a new user.</strong><br>
+          <strong>Body Format:</strong> <br>
+          <code>{ "email": "user@example.com", "username": "newuser" }</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "message": "User registered successfully!", "user": { "id": "1234", "email": "user@example.com", "username": "newuser" } }</code>
+        </td>
+      </tr>
+
+      <!-- Update Username -->
+      <tr>
+        <td>PUT</td>
+        <td>/users/:id</td>
+        <td>
+          <strong>Updates an existing user's username.</strong><br>
+          <strong>URL Parameter:</strong> <br>
+          <code>:id (user's unique ID)</code><br>
+          <strong>Body Format:</strong> <br>
+          <code>{ "username": "updatedusername" }</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "message": "User information updated successfully!", "user": { "id": "1234", "username": "updatedusername" } }</code>
+        </td>
+      </tr>
+
+      <!-- Add Movie to Favorites -->
+      <tr>
+        <td>POST</td>
+        <td>/users/:id/favorites</td>
+        <td>
+          <strong>Adds a movie to the user's favorites list.</strong><br>
+          <strong>URL Parameter:</strong> <br>
+          <code>:id (user's unique ID)</code><br>
+          <strong>Body Format:</strong> <br>
+          <code>{ "movieId": 1 }</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "message": "Movie has been added to your favorites!", "favorites": [...] }</code>
+        </td>
+      </tr>
+
+      <!-- Remove Movie from Favorites -->
+      <tr>
+        <td>DELETE</td>
+        <td>/users/:id/favorites/:movieId</td>
+        <td>
+          <strong>Removes a movie from the user's favorites list.</strong><br>
+          <strong>URL Parameters:</strong> <br>
+          <code>:id (user's unique ID), :movieId (movie's unique ID)</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "message": "Movie has been removed from your favorites.", "favorites": [...] }</code>
+        </td>
+      </tr>
+
+      <!-- Deregister User -->
+      <tr>
+        <td>DELETE</td>
+        <td>/users/:id</td>
+        <td>
+          <strong>Deletes a user's account.</strong><br>
+          <strong>URL Parameter:</strong> <br>
+          <code>:id (user's unique ID)</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "message": "User account has been removed successfully." }</code>
+        </td>
+      </tr>
+
+      <!-- Get All Movies -->
+      <tr>
+        <td>GET</td>
+        <td>/movies</td>
+        <td>
+          <strong>Returns a list of all available movies.</strong><br>
+          <strong>Response Format:</strong> <br>
+          <code>[ { "id": 1, "title": "The Godfather", "year": 1972 }, ... ]</code>
+        </td>
+      </tr>
+
+      <!-- Get Movie by Title -->
+      <tr>
+        <td>GET</td>
+        <td>/movies/:title</td>
+        <td>
+          <strong>Returns data about a specific movie by title.</strong><br>
+          <strong>URL Parameter:</strong> <br>
+          <code>:title (movie's title)</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "id": 1, "title": "The Godfather", "year": 1972, "description": "Movie description" }</code>
+        </td>
+      </tr>
+
+      <!-- Get Director Details -->
+      <tr>
+        <td>GET</td>
+        <td>/directors/:name</td>
+        <td>
+          <strong>Returns information about a director.</strong><br>
+          <strong>URL Parameter:</strong> <br>
+          <code>:name (director's name)</code><br>
+          <strong>Response Format:</strong> <br>
+          <code>{ "name": "Francis Ford Coppola", "bio": "Director of The Godfather", "birthYear": 1939 }</code>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <h2>Endpoint Details</h2>
+  <p>Each endpoint corresponds to one of the actions defined in the API. Here are the main operations:</p>
+  <ul>
+    <li><strong>Return a list of all movies</strong> – Get a full list of movies available.</li>
+    <li><strong>Return data about a single movie</strong> – Get detailed information about a specific movie by its title.</li>
+    <li><strong>Return data about a genre</strong> – Get the description of a genre by its name (e.g., "Thriller").</li>
+    <li><strong>Return data about a director</strong> – Get biography, birth and death year for a director.</li>
+    <li><strong>Allow new users to register</strong> – Register a new user by providing an email and username.</li>
+    <li><strong>Allow users to update their info</strong> – Update a user's username based on their ID.</li>
+    <li><strong>Allow users to add a movie to their list of favorites</strong> – Add a movie to the user's favorites list.</li>
+    <li><strong>Allow users to remove a movie from their list of favorites</strong> – Remove a movie from the user's favorites list.</li>
+    <li><strong>Allow users to deregister</strong> – Delete a user from the system.</li>
+  </ul>
+
 </body>
 </html>
