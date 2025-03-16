@@ -109,6 +109,7 @@ app.post('/users/:id/favorites', async (req, res) => {
   }
 });
 
+//Delete method
 // Remove movie from favorites
 app.delete('/users/:id/favorites/:movieId', async (req, res) => {
   try {
@@ -120,6 +121,21 @@ app.delete('/users/:id/favorites/:movieId', async (req, res) => {
     res.status(500).json({ error: 'Error removing movie from favorites' });
   }
 });
+
+// Delete user by ID
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await Users.findByIdAndDelete(req.params.id);
+    if (user) {
+      res.status(200).json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting user' });
+  }
+});
+
 
 
 
