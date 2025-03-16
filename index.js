@@ -36,6 +36,19 @@ app.get('/movies/:title', async (req, res) => {
   }
 });
 
+// Get genre by name
+app.get('/genres/:name', async (req, res) => {
+  try {
+    const genre = await Movies.find({ 'Genre.Name': req.params.name });
+    if (genre.length > 0) {
+      res.status(200).json(genre);
+    } else {
+      res.status(404).json({ message: 'Genre not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching genre' });
+  }
+});
 
 
 
