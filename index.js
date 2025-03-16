@@ -83,6 +83,21 @@ app.post('/users/register', async (req, res) => {
   }
 });
 
+// Update user info by ID
+app.put('/users/:id', async (req, res) => {
+  try {
+    const updatedUser = await Users.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating user' });
+  }
+});
+
+
 
 
 
