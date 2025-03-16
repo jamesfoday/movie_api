@@ -4,6 +4,14 @@ const { v4: uuidv4 } = require('uuid'); // Import uuid
 const bodyParser = require('body-parser');
 
 const app = express();
+const mongoose = require('mongoose');
+const Models = require('./models.js'); // Import models.js 
+
+const Movies = Models.Movie; 
+const Users = Models.User; 
+
+// Continue with your Express server and API logic...
+
 app.use(bodyParser.json());
 
 app.use(morgan('common'));
