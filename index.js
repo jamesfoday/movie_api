@@ -12,6 +12,8 @@ const Users = Models.User;
 
 // mongoose query
 
+// get method
+
 // Get all movies
 app.get('/movies', async (req, res) => {
   try {
@@ -61,6 +63,23 @@ app.get('/directors/:name', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Error fetching director' });
+  }
+});
+
+//Post method
+// Register new user
+app.post('/users/register', async (req, res) => {
+  try {
+    const user = new Users({
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    });
+    await user.save();
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error registering user' });
   }
 });
 
