@@ -10,7 +10,22 @@ const Models = require('./models.js'); // Import models.js
 const Movies = Models.Movie; 
 const Users = Models.User; 
 
-// Continue with your Express server and API logic...
+// mongoose query
+
+// Get all movies
+app.get('/movies', async (req, res) => {
+  try {
+    const movies = await Movies.find();
+    res.status(200).json(movies);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching movies' });
+  }
+});
+
+
+
+
+// mongoose query end
 
 app.use(bodyParser.json());
 
