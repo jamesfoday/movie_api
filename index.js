@@ -50,6 +50,21 @@ app.get('/genres/:name', async (req, res) => {
   }
 });
 
+// Get director by name
+app.get('/directors/:name', async (req, res) => {
+  try {
+    const director = await Movies.find({ 'Director.Name': req.params.name });
+    if (director.length > 0) {
+      res.status(200).json(director);
+    } else {
+      res.status(404).json({ message: 'Director not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching director' });
+  }
+});
+
+
 
 
 // mongoose query end
