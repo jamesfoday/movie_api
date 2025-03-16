@@ -97,6 +97,19 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
+// Add movie to favorites
+app.post('/users/:id/favorites', async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    user.FavoriteMovies.push(req.body.movieId);
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error adding movie to favorites' });
+  }
+});
+
+
 
 
 
