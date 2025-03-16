@@ -109,6 +109,18 @@ app.post('/users/:id/favorites', async (req, res) => {
   }
 });
 
+// Remove movie from favorites
+app.delete('/users/:id/favorites/:movieId', async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    user.FavoriteMovies.pull(req.params.movieId);
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing movie from favorites' });
+  }
+});
+
 
 
 
