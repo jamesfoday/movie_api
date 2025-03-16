@@ -22,6 +22,20 @@ app.get('/movies', async (req, res) => {
   }
 });
 
+// Get movie by title
+app.get('/movies/:title', async (req, res) => {
+  try {
+    const movie = await Movies.findOne({ Title: req.params.title });
+    if (movie) {
+      res.status(200).json(movie);
+    } else {
+      res.status(404).json({ message: 'Movie not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching movie' });
+  }
+});
+
 
 
 
