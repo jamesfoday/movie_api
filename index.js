@@ -23,6 +23,54 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('common'));
 app.use(express.static('public'));
 
+// Import authentication routes
+let auth = require('./auth')(app); // Pass the Express app to the auth.js module
+const passport = require('passport');
+require('./passport'); // Import the passport configuration
+
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const movies = await Movies.find();
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error: ' + error);
+  }
+});
+
+
+const { User } = require('./models'); 
+
+app.post('/users', async (req, res) => {
+
+  const { Username, Password, Email, Birthday } = req.body;
+
+  const existingUser = await User.findOne({ Username: Username });
+  if (existingUser) {
+    return res.status(400).json({ message: 'Username already taken.' });
+  }
+
+  const newUser = new User({
+    Username,
+    Password, 
+    Email,
+    Birthday,
+  });
+
+  try {
+    await newUser.save();
+
+    res.status(201).json({
+      message: 'User created successfully!',
+      user: newUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating user.', error });
+  }
+});
+
+
+
 // Define a route for the root URL "/"
 app.get('/', (req, res) => {
   res.send('Welcome to the Movie API!'); // Default textual response
@@ -82,20 +130,20 @@ app.get('/directors/:name', async (req, res) => {
 });
 
 // Register new user
-app.post('/users/register', async (req, res) => {
-  try {
-    const user = new Users({
-      Username: req.body.Username,
-      Password: req.body.Password,
-      Email: req.body.Email,
-      Birthday: req.body.Birthday
-    });
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(500).json({ error: 'Error registering user' });
-  }
-});
+// app.post('/users/register', async (req, res) => {
+//   try {
+//     const user = new Users({
+//       Username: req.body.Username,
+//       Password: req.body.Password,
+//       Email: req.body.Email,
+//       Birthday: req.body.Birthday
+//     });
+//     await user.save();
+//     res.status(201).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error registering user' });
+//   }
+// });
 
 // Update user info by ID
 app.put('/users/:id', async (req, res) => {
