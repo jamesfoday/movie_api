@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
+const { check, validationResult } = require('express-validator');
 
 const app = express();
 const port = process.env.PORT || 8080;
