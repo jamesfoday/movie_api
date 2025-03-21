@@ -14,9 +14,13 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
 
-mongoose.connect('mongodb+srv://jamesfoday1:Jesusislove&12@myflix.osihw.mongodb.net/?retryWrites=true&w=majority&appName=myFlix', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB: ', err));
+mongoose.connect('mongodb+srv://jamesfoday1:Jesusislove&12@myflix.osihw.mongodb.net/?retryWrites=true&w=majority&appName=myFlix', { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+})
+.then(() => console.log('Connected to MongoDB Atlas'))
+.catch((err) => console.error('Error connecting to MongoDB: ', err));
+
 
 
 app.use(bodyParser.json());
