@@ -8,7 +8,10 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Listening on Port ${port}`);
+});
 
 mongoose.connect('mongodb://localhost:27017/myFlix')
   .then(() => console.log('Connected to MongoDB'))
@@ -41,33 +44,48 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
 
 const { User } = require('./models'); 
 
-app.post('/users', async (req, res) => {
+app.post('/users',
+  // Validation logic for the incoming request body
+  [
+    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ],
+  async (req, res) => {
+    // check if validation failed
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-  const { Username, Password, Email, Birthday } = req.body;
-
-  const existingUser = await User.findOne({ Username: Username });
-  if (existingUser) {
-    return res.status(400).json({ message: 'Username already taken.' });
-  }
-
-  const newUser = new User({
-    Username,
-    Password, 
-    Email,
-    Birthday,
+    // Hash the password before saving to the database
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    await Users.findOne({ Username: req.body.Username }) 
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + ' already exists');
+        } else {
+          Users.create({
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) => res.status(201).json(user))
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
   });
 
-  try {
-    await newUser.save();
 
-    res.status(201).json({
-      message: 'User created successfully!',
-      user: newUser,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating user.', error });
-  }
-});
 
 
 
