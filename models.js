@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
 
 
 let movieSchema = mongoose.Schema({
@@ -29,6 +31,17 @@ let userSchema = mongoose.Schema({
 //  Models
 let Movie = mongoose.model('Movie', movieSchema);
 let User = mongoose.model('User', userSchema);
+
+// hash password before saved in the database.
+userSchema.statics.hashPassword = (password) => {
+  return bcrypt.hashSync(password, 10); // '10' is the salt rounds (complexity)
+};
+
+// Compare harsh password with the one in database 
+userSchema.methods.validatePassword = function(password) {
+  return bcrypt.compareSync(password, this.Password); 
+};
+
 
 // Export Models for use in other files
 module.exports.Movie = Movie;
