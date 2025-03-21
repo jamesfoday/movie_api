@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jamesfoday/movie_api.git"
@@ -31,8 +30,4 @@
     "passport-local": "^1.0.0",
     "uuid": "^11.1.0"
   }
-
 }
-
-
-
