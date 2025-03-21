@@ -14,12 +14,13 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
 
-mongoose.connect('mongodb+srv://jamesfoday1:Jesusislove&12@myflix.osihw.mongodb.net/?retryWrites=true&w=majority&appName=myFlix', { 
+mongoose.connect(process.env.MONGODB_URI, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
 })
 .then(() => console.log('Connected to MongoDB Atlas'))
 .catch((err) => console.error('Error connecting to MongoDB: ', err));
+
 
 
 
