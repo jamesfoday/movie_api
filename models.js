@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 
 
@@ -24,6 +25,19 @@ const userSchema = new mongoose.Schema({
   Password: { type: String, required: true },
   Email: { type: String, required: true },
   Birthday: { type: Date, required: true }
+});
+
+// Hash the password before saving it
+userSchema.pre('save', function (next) {
+  if (this.isModified('Password') || this.isNew) {
+    bcrypt.hash(this.Password, saltRounds, (err, hashedPassword) => {
+      if (err) return next(err);
+      this.Password = hashedPassword;
+      next();
+    });
+  } else {
+    return next();
+  }
 });
 
 // Adding password validation method
