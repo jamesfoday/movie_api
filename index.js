@@ -147,21 +147,47 @@ app.get('/directors/:name', async (req, res) => {
   }
 });
 
-//Register new user
-app.post('/users/register', async (req, res) => {
-  try {
-    const user = new Users({
-      Username: req.body.Username,
-      Password: req.body.Password,
-      Email: req.body.Email,
-      Birthday: req.body.Birthday
-    });
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(500).json({ error: 'Error registering user' });
-  }
-});
+// Register new user
+app.post('/users/register', 
+ 
+  [
+    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ],
+  async (req, res) => {
+    // check if validation failed
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    try {
+      // Hash the password before saving to the database
+      let hashedPassword = Users.hashPassword(req.body.Password);
+
+      // Check if the username already exists
+      const existingUser = await Users.findOne({ Username: req.body.Username });
+      if (existingUser) {
+        return res.status(400).send(req.body.Username + ' already exists');
+      }
+
+      // Create new user
+      const newUser = new Users({
+        Username: req.body.Username,
+        Password: hashedPassword,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      });
+
+      await newUser.save();  
+      res.status(201).json(newUser);  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error registering user' });
+    }
+  });
 
 // Update user info by ID
 app.put('/users/:id', async (req, res) => {
