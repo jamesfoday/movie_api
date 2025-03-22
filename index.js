@@ -147,21 +147,21 @@ app.get('/directors/:name', async (req, res) => {
   }
 });
 
-// Register new user
-// app.post('/users/register', async (req, res) => {
-//   try {
-//     const user = new Users({
-//       Username: req.body.Username,
-//       Password: req.body.Password,
-//       Email: req.body.Email,
-//       Birthday: req.body.Birthday
-//     });
-//     await user.save();
-//     res.status(201).json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error registering user' });
-//   }
-// });
+//Register new user
+app.post('/users/register', async (req, res) => {
+  try {
+    const user = new Users({
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    });
+    await user.save();
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error registering user' });
+  }
+});
 
 // Update user info by ID
 app.put('/users/:id', async (req, res) => {
