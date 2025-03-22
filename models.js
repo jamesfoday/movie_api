@@ -19,14 +19,21 @@ let movieSchema = mongoose.Schema({
   Featured: { type: Boolean, default: false }
 });
 
-// Schema
-let userSchema = mongoose.Schema({
-  Username: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+  Username: { type: String, required: true, unique: true },
   Password: { type: String, required: true },
   Email: { type: String, required: true },
-  Birthday: { type: Date, required: true },
-  FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // References to Movie model
+  Birthday: { type: Date, required: true }
 });
+
+// Adding password validation method
+userSchema.methods.validatePassword = function (password) {
+  return bcrypt.compareSync(password, this.Password);
+};
+
+
+
+
 
 //  Models
 let Movie = mongoose.model('Movie', movieSchema);
