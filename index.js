@@ -16,9 +16,8 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
 
-mongoose.connect('mongodb+srv://jamesfoday1:pass 8gc7MycEhywuTQDk@myflix.osihw.mongodb.net/?retryWrites=true&w=majority&appName=myFlix', { })
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB: ', err));
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
