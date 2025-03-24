@@ -11,6 +11,9 @@ const jwt = require('jsonwebtoken');  // JWT for token generation
 
 const app = express();
 const port = process.env.PORT || 8080;
+const cors = require('cors');
+app.use(cors());
+
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
