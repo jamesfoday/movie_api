@@ -47,10 +47,10 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
 // Registration endpoint
 app.post('/users', 
   [
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username is required').isLength({ min: 5 }) .withMessage('Username must be at least 5 characters'),
     check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
+    check('Password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+    check('Email', 'Email does not appear to be valid').isEmail().withMessage('Invalid email address')
   ],
   async (req, res) => {
     // Check if validation failed
