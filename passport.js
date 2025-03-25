@@ -39,7 +39,7 @@ passport.use(
 // JWTStrategy - For token-based authentication
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-  secretOrKey: '458jkele;a785als' 
+  secretOrKey: 'newSecret1234!@#$%^' 
 }, async (jwtPayload, callback) => {
   try {
     const user = await Users.findById(jwtPayload._id);
