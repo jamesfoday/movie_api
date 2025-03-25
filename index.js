@@ -103,10 +103,10 @@ app.post('/users/login', async (req, res) => {
   }
 
   // Generate JWT token if login is successful
-  const token = jwt.sign({ id: user._id, Username: user.Username }, 'your_jwt_secret_key', { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id, Username: user.Username }, 'newSecret17125jesusislove&me', { expiresIn: '1h' });
 
   res.status(200).json({ message: 'Login successful', token });
 });
 
-// Other routes (for updating user, adding/removing favorites, etc.)...
+
 
