@@ -3,7 +3,7 @@ const passport = require('passport');
 require('./passport'); //  passport Import
 
 let generateJWTToken = (user) => {
-  return jwt.sign(user, '458jkele;a785als', {  
+  return jwt.sign(user, 'newSecret1234!@#$%^', {  
     subject: user.Username,
     expiresIn: '7d',
     algorithm: 'HS256'
