@@ -80,7 +80,7 @@ app.post('/users',
       await newUser.save();
 
       // Generate a token
-      const token = jwt.sign({ id: newUser._id, Username: newUser.Username }, 'newSecret17125jesusislove&me', { expiresIn: '1h' });
+      const token = jwt.sign({ id: newUser._id, Username: newUser.Username }, '458jkele;a785als', { expiresIn: '1h' });
 
       // Respond with user data and token
       res.status(201).json({ user: newUser, token: token });
@@ -103,7 +103,7 @@ app.post('/users/login', async (req, res) => {
   }
 
   // Generate JWT token if login is successful
-  const token = jwt.sign({ id: user._id, Username: user.Username }, 'newSecret17125jesusislove&me', { expiresIn: '1h' });
+  const token = jwt.sign({ id: user._id, Username: user.Username }, '458jkele;a785als', { expiresIn: '1h' });
 
   res.status(200).json({ message: 'Login successful', token });
 });
