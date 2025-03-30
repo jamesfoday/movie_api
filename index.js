@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
-const Models = require('./models.js'); 
+const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const jwt = require('jsonwebtoken');
@@ -29,7 +29,7 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 // Connect to MongoDB Atlas
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(passport.initialize()); // Initialize passport for authentication
 
@@ -60,7 +60,17 @@ app.post('/users/login', (req, res) => {
 });
 
 // Protected Route for Movies (Only accessible with valid JWT)
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//   try {
+//     const movies = await Movies.find();
+//     res.status(200).json(movies);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error: ' + error);
+//   }
+// });
+
+app.get('/movies', async (req, res) => {
   try {
     const movies = await Movies.find();
     res.status(200).json(movies);
@@ -70,14 +80,15 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
   }
 });
 
+
 // Register New User
-app.post('/users', 
+app.post('/users',
   [
     check('Username', 'Username is required').isLength({ min: 5 }),
     check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
     check('Password', 'Password is required').not().isEmpty(),
     check('Email', 'Email does not appear to be valid').isEmail()
-  ], 
+  ],
   async (req, res) => {
     // Check if validation failed
     const errors = validationResult(req);
@@ -87,13 +98,13 @@ app.post('/users',
 
     // Hash password before saving
     let hashedPassword = Users.hashPassword(req.body.Password);
-    
+
     try {
       const user = await Users.findOne({ Username: req.body.Username });
       if (user) {
         return res.status(400).send(req.body.Username + ' already exists');
       }
-      
+
       // Create the new user
       const newUser = new Users({
         Username: req.body.Username,
