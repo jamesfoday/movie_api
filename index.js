@@ -121,6 +121,45 @@ app.post('/users',
   }
 );
 
+//endpoint for updating user
+app.put('/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      // Only allow user to update their own profile
+      if (req.user.Username !== req.params.username) {
+        return res.status(403).send('You can only update your own profile.');
+      }
+
+      //  hash the password only if it's being changed
+      const updateData = {
+        Username: req.body.Username,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      };
+
+      if (req.body.Password) {
+        updateData.Password = Users.hashPassword(req.body.Password);
+      }
+
+      const updatedUser = await Users.findOneAndUpdate(
+        { Username: req.params.username },
+        { $set: updateData },
+        { new: true } // return the updated document
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send('User not found.');
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error updating user.');
+    }
+  }
+);
+
 // Endpoint to add movie to favorites
 app.post('/users/:id/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
