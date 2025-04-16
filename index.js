@@ -15,7 +15,24 @@ const port = process.env.PORT || 8080;
 
 // Middleware
 const cors = require('cors');
-app.use(cors());
+
+let allowedOrigins = [
+  'http://localhost:1234',
+  'http://localhost:8080',
+  'https://myflix1712.netlify.app'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // Allow requests like Postman
+    if (allowedOrigins.indexOf(origin) === -1) {
+      let message = 'The CORS policy does not allow access from origin: ' + origin;
+      return callback(new Error(message), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 
 // Setup body parser
 app.use(bodyParser.json());
