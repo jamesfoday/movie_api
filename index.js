@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator');
-const Models = require('./models.js'); 
+const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const jwt = require('jsonwebtoken');
@@ -15,7 +15,25 @@ const port = process.env.PORT || 8080;
 
 // Middleware
 const cors = require('cors');
-app.use(cors());
+
+let allowedOrigins = [
+  'http://localhost:1234',
+  'http://localhost:8080',
+  'https://myflix1712.netlify.app',
+  'https://myflix1721.netlify.app'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // Allow requests like Postman
+    if (allowedOrigins.indexOf(origin) === -1) {
+      let message = 'The CORS policy does not allow access from origin: ' + origin;
+      return callback(new Error(message), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 
 // Setup body parser
 app.use(bodyParser.json());
@@ -29,7 +47,7 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 // Connect to MongoDB Atlas
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(passport.initialize()); // Initialize passport for authentication
 
@@ -60,7 +78,17 @@ app.post('/users/login', (req, res) => {
 });
 
 // Protected Route for Movies (Only accessible with valid JWT)
-app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//   try {
+//     const movies = await Movies.find();
+//     res.status(200).json(movies);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error: ' + error);
+//   }
+// });
+
+app.get('/movies', async (req, res) => {
   try {
     const movies = await Movies.find();
     res.status(200).json(movies);
@@ -70,14 +98,15 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), async (req,
   }
 });
 
+
 // Register New User
-app.post('/users', 
+app.post('/users',
   [
     check('Username', 'Username is required').isLength({ min: 5 }),
     check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
     check('Password', 'Password is required').not().isEmpty(),
     check('Email', 'Email does not appear to be valid').isEmail()
-  ], 
+  ],
   async (req, res) => {
     // Check if validation failed
     const errors = validationResult(req);
@@ -87,13 +116,13 @@ app.post('/users',
 
     // Hash password before saving
     let hashedPassword = Users.hashPassword(req.body.Password);
-    
+
     try {
       const user = await Users.findOne({ Username: req.body.Username });
       if (user) {
         return res.status(400).send(req.body.Username + ' already exists');
       }
-      
+
       // Create the new user
       const newUser = new Users({
         Username: req.body.Username,
@@ -106,6 +135,45 @@ app.post('/users',
       res.status(201).json(newUser);
     } catch (error) {
       res.status(500).send('Error: ' + error);
+    }
+  }
+);
+
+//endpoint for updating user
+app.put('/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      // Only allow user to update their own profile
+      if (req.user.Username !== req.params.username) {
+        return res.status(403).send('You can only update your own profile.');
+      }
+
+      //  hash the password only if it's being changed
+      const updateData = {
+        Username: req.body.Username,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      };
+
+      if (req.body.Password) {
+        updateData.Password = Users.hashPassword(req.body.Password);
+      }
+
+      const updatedUser = await Users.findOneAndUpdate(
+        { Username: req.params.username },
+        { $set: updateData },
+        { new: true } // return the updated document
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send('User not found.');
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error updating user.');
     }
   }
 );
