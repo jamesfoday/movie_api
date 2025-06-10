@@ -206,6 +206,20 @@ app.delete('/users/:id/favorites/:movieId', passport.authenticate('jwt', { sessi
   }
 });
 
+// Get user by username (for profile view)
+app.get('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const user = await Users.findOne({ Username: req.params.username });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).send('Error: ' + error);
+  }
+});
+
+
 // CRUD operations for movies
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
