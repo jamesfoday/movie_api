@@ -219,6 +219,17 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
   }
 });
 
+// Get user's favorite movies
+app.get('/users/:id/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+    if (!user) return res.status(404).send('User not found');
+    res.status(200).json({ FavoriteMovies: user.FavoriteMovies });
+  } catch (err) {
+    res.status(500).send({ error: 'Error fetching favorites' });
+  }
+});
+
 
 // CRUD operations for movies
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
