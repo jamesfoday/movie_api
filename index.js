@@ -21,7 +21,9 @@ let allowedOrigins = [
   'http://localhost:8080',
   'https://myflix1712.netlify.app',
   'https://myflix1721.netlify.app',
-  'http://localhost:4200'
+  'http://localhost:4200',
+  'https://jamesfoday.github.io/myflix-anuglar-client'
+
 ];
 
 app.use(cors({
