@@ -22,7 +22,12 @@ let allowedOrigins = [
   'https://myflix1712.netlify.app',
   'https://myflix1721.netlify.app',
   'http://localhost:4200',
-  'https://jamesfoday.github.io/myflix-anuglar-client'
+  'https://jamesfoday.github.io/myflix-anuglar-client',
+  'https://jamesfoday.github.io/myflix-angular-client/welcome',
+  'https://jamesfoday.github.io'
+
+
+
 
 ];
 
