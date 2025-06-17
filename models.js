@@ -1,6 +1,26 @@
+/**
+ * @fileoverview Defines the Mongoose schemas and models for Movie and User collections in the myFlix API.
+ */
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+
+/**
+ * Mongoose schema for Movie collection.
+ * @typedef {Object} Movie
+ * @property {string} Title - Title of the movie.
+ * @property {string} Description - Description of the movie.
+ * @property {Object} Genre - Genre details of the movie.
+ * @property {string} Genre.Name - Name of the genre.
+ * @property {string} [Genre.Description] - Description of the genre.
+ * @property {Object} Director - Director details of the movie.
+ * @property {string} Director.Name - Name of the director.
+ * @property {string} [Director.Bio] - Biography of the director.
+ * @property {Array<string>} [Actors] - List of actors in the movie.
+ * @property {string} [ImagePath] - Path to the movie image.
+ * @property {boolean} [Featured=false] - If the movie is featured.
+ */
 
 // Movie schema
 let movieSchema = mongoose.Schema({
@@ -19,6 +39,17 @@ let movieSchema = mongoose.Schema({
   Featured: { type: Boolean, default: false }
 });
 
+
+/**
+ * Mongoose schema for User collection.
+ * @typedef {Object} User
+ * @property {string} Username - Username of the user (unique).
+ * @property {string} Password - Hashed password of the user.
+ * @property {string} Email - Email address of the user.
+ * @property {Date} Birthday - Birthday of the user.
+ * @property {Array<ObjectId>} [FavoriteMovies] - List of favorite movies (ObjectId references).
+ */
+
 // User schema
 const userSchema = new mongoose.Schema({
   Username: { type: String, required: true, unique: true },
@@ -27,6 +58,13 @@ const userSchema = new mongoose.Schema({
   Birthday: { type: Date, required: true },
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // Reference to Movie model
 });
+
+/**
+ * Hash the user's password before saving to the database.
+ * @function
+ * @memberof User
+ * @param {Function} next - Callback to continue save process.
+ */
 
 // Hash the password before saving it
 userSchema.pre('save', function (next) {
@@ -41,10 +79,28 @@ userSchema.pre('save', function (next) {
   }
 });
 
+/**
+ * Checks if the entered password matches the user's password.
+ * @function
+ * @memberof User
+ * @instance
+ * @param {string} password - Password to validate.
+ * @returns {boolean} True if password is valid, else false.
+ */
+
 // Method to validate password
 userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.Password);
 };
+
+/**
+ * Hashes a password using bcrypt.
+ * @function
+ * @memberof User
+ * @static
+ * @param {string} password - Password to hash.
+ * @returns {string} Hashed password.
+ */
 
 // Static method to hash password before saving (in case you need it somewhere else)
 userSchema.statics.hashPassword = (password) => {
@@ -52,7 +108,9 @@ userSchema.statics.hashPassword = (password) => {
 };
 
 // Create the Models
+/** Movie model from movieSchema. */
 let Movie = mongoose.model('Movie', movieSchema);
+/** User model from userSchema. */
 let User = mongoose.model('User', userSchema);
 
 // Export Models for use in other files

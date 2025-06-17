@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Main Express server for the myFlix API.
+ * Handles user authentication, registration, and movie endpoints.
+ * Uses MongoDB for data storage and Passport for authentication.
+ */
+
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -15,6 +21,11 @@ const port = process.env.PORT || 8080;
 
 // Middleware
 const cors = require('cors');
+
+/**
+ * List of allowed origins for CORS policy.
+ * @type {Array<string>}
+ */
 
 let allowedOrigins = [
   'http://localhost:1234',
@@ -50,6 +61,11 @@ app.use(morgan('common'));
 app.use(express.static('public'));
 
 
+/**
+ * Starts the server and listens for requests.
+ * @function
+ */
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
@@ -60,11 +76,28 @@ mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnified
 app.use(passport.initialize()); // Initialize passport for authentication
 
 
+/**
+ * @route GET /
+ * @group Base - Home route
+ * @returns {string} 200 - Welcome message
+ * @summary Home endpoint returns a welcome message.
+ */
+
 // Routes
 // GET Home Route
 app.get('/', (req, res) => {
   res.send('Welcome to the Movie API!');
 });
+
+/**
+ * @route POST /users/login
+ * @group Users - Login
+ * @param {string} Username.body.required - User's username
+ * @param {string} Password.body.required - User's password
+ * @returns {object} 200 - Returns user object and JWT token
+ * @returns {Error} 400 - If credentials are wrong
+ * @summary Authenticates user and returns JWT.
+ */
 
 // Login Route for Users
 app.post('/users/login', (req, res) => {
@@ -96,6 +129,15 @@ app.post('/users/login', (req, res) => {
 //   }
 // });
 
+
+/**
+ * @route GET /movies
+ * @group Movies - Operations about movies
+ * @returns {Array<Movie>} 200 - List of all movies
+ * @returns {Error} 500 - Server error
+ * @summary Returns a list of all movies.
+ */
+
 app.get('/movies', async (req, res) => {
   try {
     const movies = await Movies.find();
@@ -106,6 +148,18 @@ app.get('/movies', async (req, res) => {
   }
 });
 
+
+/**
+ * @route POST /users
+ * @group Users - Registration
+ * @param {string} Username.body.required - User's username (min 5 chars, alphanumeric)
+ * @param {string} Password.body.required - User's password
+ * @param {string} Email.body.required - User's email
+ * @param {string} [Birthday.body] - User's birthday
+ * @returns {object} 201 - Newly created user object
+ * @returns {Error} 400 - If username already exists
+ * @summary Register a new user.
+ */
 
 // Register New User
 app.post('/users',
@@ -147,6 +201,19 @@ app.post('/users',
   }
 );
 
+/**
+ * @route PUT /users/:username
+ * @group Users - Update
+ * @param {string} username.path.required - The user's username
+ * @param {string} [Username.body] - New username
+ * @param {string} [Password.body] - New password
+ * @param {string} [Email.body] - New email
+ * @param {string} [Birthday.body] - New birthday
+ * @returns {object} 200 - Updated user object
+ * @returns {Error} 403 - If user tries to update another user
+ * @summary Update user profile (only for logged in user).
+ */
+
 //endpoint for updating user
 app.put('/users/:username',
   passport.authenticate('jwt', { session: false }),
@@ -186,6 +253,16 @@ app.put('/users/:username',
   }
 );
 
+/**
+ * @route POST /users/:id/favorites
+ * @group Users - Favorites
+ * @param {string} id.path.required - User's ID
+ * @param {string} movieId.body.required - Movie ID to add to favorites
+ * @returns {object} 200 - Updated user object with favorites
+ * @returns {Error} 500 - Server error
+ * @summary Add a movie to user's list of favorites.
+ */
+
 // Endpoint to add movie to favorites
 app.post('/users/:id/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
@@ -201,6 +278,18 @@ app.post('/users/:id/favorites', passport.authenticate('jwt', { session: false }
   }
 });
 
+
+/**
+ * @route DELETE /users/:id/favorites/:movieId
+ * @group Users - Favorites
+ * @param {string} id.path.required - User's ID
+ * @param {string} movieId.path.required - Movie ID to remove from favorites
+ * @returns {object} 200 - Updated user object with favorites
+ * @returns {Error} 500 - Server error
+ * @summary Remove a movie from user's favorites.
+ */
+
+
 // Endpoint to delete movie from favorites
 app.delete('/users/:id/favorites/:movieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
@@ -212,6 +301,16 @@ app.delete('/users/:id/favorites/:movieId', passport.authenticate('jwt', { sessi
     res.status(500).json({ error: 'Error removing movie from favorites' });
   }
 });
+
+
+/**
+ * @route GET /users/:username
+ * @group Users - Profile
+ * @param {string} username.path.required - The user's username
+ * @returns {object} 200 - User profile info
+ * @returns {Error} 404 - If user not found
+ * @summary Get user by username (profile view).
+ */
 
 // Get user by username (for profile view)
 app.get('/users/:username', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -226,6 +325,15 @@ app.get('/users/:username', passport.authenticate('jwt', { session: false }), as
   }
 });
 
+/**
+ * @route GET /users/:id/favorites
+ * @group Users - Favorites
+ * @param {string} id.path.required - User's ID
+ * @returns {object} 200 - List of favorite movies
+ * @returns {Error} 404 - If user not found
+ * @summary Get a user's favorite movies.
+ */
+
 // Get user's favorite movies
 app.get('/users/:id/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
@@ -237,6 +345,15 @@ app.get('/users/:id/favorites', passport.authenticate('jwt', { session: false })
   }
 });
 
+
+/**
+ * @route GET /movies/:title
+ * @group Movies - Operations about movies
+ * @param {string} title.path.required - Title of the movie
+ * @returns {object} 200 - Movie object
+ * @returns {Error} 404 - Movie not found
+ * @summary Get movie details by title.
+ */
 
 // CRUD operations for movies
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -251,6 +368,17 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false }), asyn
     res.status(500).json({ error: 'Error fetching movie' });
   }
 });
+
+
+
+/**
+ * @route DELETE /users/:id
+ * @group Users - Deletion
+ * @param {string} id.path.required - User's ID
+ * @returns {object} 200 - Success message
+ * @returns {Error} 404 - User not found
+ * @summary Delete a user by ID.
+ */
 
 // Delete user
 app.delete('/users/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
